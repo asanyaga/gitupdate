@@ -3,14 +3,14 @@ require 'dbi'
 require 'active_record'
 require 'mysql2'
 class MigrateIssue
-	
+
 	def migrate_all_issues
-		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
+		client=Octokit::Client.new(:access_token => 'ab6231cd601b2c33588db912a7697531ce1d0311')
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:state => 'all'})
-		
+
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
-		
+
 		issues.each do |issue|
 			db_issue=Issue.new()
 			db_issue.number=issue.number
@@ -30,13 +30,13 @@ class MigrateIssue
 			db_issue.save
 		end
 	end
-	
+
 	def update_since(date)
 		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:since => date})
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
-		
+
 		issues.each do |issue|
 			db_issue=Issue.find(issue.number)
 			if db_issue
@@ -85,11 +85,11 @@ class MigrateIssue
 			end
 		end
 	end
-	
+
 	def migrate_test
 		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
 		client.auto_paginate=true
-		
+
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
 		number_range = (1..48).to_a
 		number_range.each do |issue_number|
@@ -112,10 +112,10 @@ class MigrateIssue
 			db_issue.save
 		end
 	end
-	
+
 	def save_new_issue(issue)
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
-		
+
 		db_issue=Issue.new()
 		db_issue.number=issue.number
 		db_issue.state=issue.state
@@ -133,7 +133,7 @@ class MigrateIssue
 		end
 		db_issue.save
 	end
-	
+
 	def save_event(event)
 		db_event=Event.new()
 		db_event.issue_number=event.issue.number
@@ -144,20 +144,20 @@ class MigrateIssue
 		db_event.assignee = event.assignee.login if event.assignee
 		db_event.save
 	end
-	
+
 	def migrate_update_closed
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
 		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:state => 'closed'})
-		
+
 		issues.each do |issue|
 			db_issue=Issue.where("number = #{issue.number}")
 			db_issue[0].closed_on=issue.closed_at
 			db_issue[0].save
 		end
 	end
-	
+
 	def migrate_events
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
 		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
@@ -177,7 +177,7 @@ class MigrateIssue
 			end
 		end
 	end
-	
+
 	def migrate_time_assigned
 		#Issue.find_each do |db_issue|
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')

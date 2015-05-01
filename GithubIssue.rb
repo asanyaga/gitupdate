@@ -4,7 +4,7 @@ DataMapper.setup(:default, 'mysql://root:root@localhost:3306/gitissues')
 
 class Issue
 	include DataMapper::Resource
-	
+
 	property :id, Serial
 	property :number, String
 	property :issue_id, String
