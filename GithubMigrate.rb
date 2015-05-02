@@ -5,7 +5,7 @@ require 'mysql2'
 class MigrateIssue
 
 	def migrate_all_issues
-		client=Octokit::Client.new(:access_token => 'ab6231cd601b2c33588db912a7697531ce1d0311')
+		client=Octokit::Client.new(:access_token => ENV['GITBAN_AUTH'])
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:state => 'all'})
 
@@ -32,7 +32,7 @@ class MigrateIssue
 	end
 
 	def update_since(date)
-		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
+		client=Octokit::Client.new(:access_token => ENV['GITBAN_AUTH'])
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:since => date})
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
@@ -87,7 +87,7 @@ class MigrateIssue
 	end
 
 	def migrate_test
-		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
+		client=Octokit::Client.new(:access_token => ENV['GITBAN_AUTH'])
 		client.auto_paginate=true
 
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
@@ -147,7 +147,7 @@ class MigrateIssue
 
 	def migrate_update_closed
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
-		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
+		client=Octokit::Client.new(:access_token => ENV['GITBAN_AUTH'])
 		client.auto_paginate=true
 		issues=client.issues('mFieldwork/mFieldwork', {:state => 'closed'})
 
@@ -160,7 +160,7 @@ class MigrateIssue
 
 	def migrate_events
 		ActiveRecord::Base.establish_connection(adapter: 'mysql2', host: 'localhost',database: 'gitissues',username:'root',password: 'root')
-		client=Octokit::Client.new(:access_token => 'a2d8eb494d41bb4a2b9e2dcc38d7b1ba666b340e')
+		client=Octokit::Client.new(:access_token => ENV['GITBAN_AUTH'])
 		client.auto_paginate=true
 		#issues=Issue.find(:all)
 		Issue.find_each do |issue|
